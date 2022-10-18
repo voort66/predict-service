@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <title>My World Cup 2022 predictions - Qatar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}"/>
+</head>
+<body>
+
+<form action="#" th:action="@{/predictions/save}" th:object="${predictionDtoObject}"
+      method="post">
+    <fieldset>
+        <input type="submit" id="submitButton" th:value="Save">
+        <input type="reset" id="resetButton" name="reset" th:value="Reset"/>
+        <table>
+            <thead>
+            <tr>
+                <th> Home</th>
+                <th/>
+                <th> Away</th>
+                <th/>
+                <th> Start</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="prediction, itemStat : *{predictions}">
+                <td>
+                    <input type="hidden" th:value="${prediction.matchId}" th:attr="name='predictions[__${itemStat.index}__].matchId'"/>
+                    <input type="hidden" th:value="${prediction.userName}" th:attr="name='predictions[__${itemStat.index}__].userName'"/>
+                      <span>
+                        <img class="logo" th:src="*{predictions[__${itemStat.index}__].matchDetails.homeTeamLogo}"/>
+                      </span>
+                    <span th:text="*{predictions[__${itemStat.index}__].matchDetails.homeTeamName}"/>
+
+                </td>
+                <td class="goalField">
+                    <input class="score" th:field="*{predictions[__${itemStat.index}__].homeGoals}"/>
+                    <div class="alert alert-warning" th:if="${#fields.hasErrors('homeGoals')}" th:errors="*{predictions[__${itemStat.index}__].homeGoals}"></div>
+                </td>
+                <td>
+                       <span>
+                        <img class="logo" th:src="*{predictions[__${itemStat.index}__].matchDetails.awayTeamLogo}"/>
+                      </span>
+                    <span th:text="*{predictions[__${itemStat.index}__].matchDetails.awayTeamName}"/>
+
+                </td>
+                <td class="goalField">
+                    <input class="score" th:field="*{predictions[__${itemStat.index}__].awayGoals}" />
+                    <div class="alert alert-warning" th:if="${#fields.hasErrors('awayGoals')}" th:errors="*{predictions[__${itemStat.index}__].awayGoals}"></div>
+                </td>
+                <td>
+                    <span th:text="*{predictions[__${itemStat.index}__].matchDetails.startDate}"/>
+                    <span th:text="*{predictions[__${itemStat.index}__].matchDetails.startTime}"/>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </fieldset>
+</form>
+
+
+</body>
+</html>
