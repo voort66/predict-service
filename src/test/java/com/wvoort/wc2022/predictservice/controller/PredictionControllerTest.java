@@ -2,7 +2,9 @@ package com.wvoort.wc2022.predictservice.controller;
 
 import com.wvoort.wc2022.predictservice.model.Match;
 import com.wvoort.wc2022.predictservice.model.Prediction;
+import com.wvoort.wc2022.predictservice.model.PredictionPolicyFactory;
 import com.wvoort.wc2022.predictservice.services.PredictionService;
+import com.wvoort.wc2022.predictservice.services.PredictionValidationService;
 import org.aspectj.lang.annotation.Before;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@WebMvcTest(PredictionController.class)
+@WebMvcTest({PredictionController.class, PredictionValidationService.class})
 class PredictionControllerTest {
 
     @Autowired
@@ -37,6 +39,12 @@ class PredictionControllerTest {
 
     @MockBean
     private PredictionService predictionService;
+
+    @MockBean
+    private PredictionPolicyFactory predictionPolicyFactory;
+
+    @Autowired
+    private PredictionValidationService predictionValidationService;
 
     private Principal principal;
 
@@ -58,6 +66,7 @@ class PredictionControllerTest {
         p.setMatchDetails(m);
 
         when(predictionService.getPredictions(any())).thenReturn(Collections.singletonList(p));
+
 
     }
 

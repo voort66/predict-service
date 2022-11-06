@@ -1,6 +1,7 @@
 package com.wvoort.wc2022.predictservice.services;
 
 import com.wvoort.wc2022.predictservice.model.Matches;
+import com.wvoort.wc2022.predictservice.model.Prediction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,7 +23,7 @@ public class MatchService {
 
 
 
-    @Cacheable(value = "matchesCache")
+
     private String getRawMatches() {
 
         final ResponseEntity<String> responseEntity =
@@ -32,6 +33,7 @@ public class MatchService {
 
 
 
+    @Cacheable(value = MATCHES_CACHE_KEY)
     public Matches getMatches() {
 
         return Matches.fromJsonResponseString(getRawMatches());

@@ -12,8 +12,6 @@ import java.util.Objects;
 @Data
 public class PredictionDto {
 
-    private String user;
-
     private List<Prediction> predictions;
 
     public PredictionDto() {
@@ -25,6 +23,7 @@ public class PredictionDto {
     public void addPrediction(Prediction prediction) {
         predictions.add(prediction);
     }
+
 
 
 

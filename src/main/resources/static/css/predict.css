@@ -10,9 +10,11 @@
     align-items: center;
 }
 
-fieldset {
-    width: 100%;
+.error {
+    font-color: red;
 }
+
+
 
 .logo {
     width: 20px;

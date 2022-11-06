@@ -10,13 +10,16 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Transient;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import java.io.Serializable;
 import java.time.Instant;
 
 @Entity
 @IdClass(PredictionId.class)
 @EqualsAndHashCode
 @Data
-public class Prediction implements Comparable<Prediction> {
+public class Prediction implements Comparable<Prediction>, Serializable {
 
     public Prediction() {
         //noop

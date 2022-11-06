@@ -7,6 +7,7 @@ import com.wvoort.wc2022.predictservice.repository.PredictionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,16 +23,16 @@ public class PredictionService {
     private MatchService matchService;
 
 
+
     public List<Prediction> getPredictions(String userName) {
-        Matches matches = matchService.getMatches();
 
         List<Prediction> predictions = predictionRepository.findByUserName(userName);
         predictions.forEach(p -> {
-            p.setMatchDetails(matches.getMatchById(p.getMatchId()));
+            p.setMatchDetails(getMatches().getMatchById(p.getMatchId()));
         });
 
         predictions.addAll(
-                matches.getMatchesWithoutPredictions(predictions).stream()
+                getMatches().getMatchesWithoutPredictions(predictions).stream()
                         .map(m -> new Prediction(m.getMatchId(), userName, m)).collect(Collectors.toList()));
 
 
@@ -43,6 +44,18 @@ public class PredictionService {
 
         predictions.stream().filter(p -> p.getAwayGoals() != null && p.getHomeGoals() != null).map(this::updateTimestamps).
                 forEach(predictionRepository::save);
+
+
+    }
+
+    public Prediction updatePredictionWithMatchDetails(Prediction p) {
+        if (p.getMatchDetails() != null) {
+            return p;
+        }
+
+
+        p.setMatchDetails(getMatches().getMatchById(p.getMatchId()));
+        return p;
 
 
     }
@@ -68,6 +81,10 @@ public class PredictionService {
         }
 
         return prediction;
+    }
+
+    private Matches getMatches() {
+        return matchService.getMatches();
     }
 
 

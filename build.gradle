@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.wvoort.wc2022'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
@@ -42,12 +42,13 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.9.1'
 	implementation 'org.apache.httpcomponents:httpclient:4.5.13'
 	implementation 'javax.cache:cache-api:1.1.1'
-	implementation 'org.ehcache:ehcache:3.10.1'
 
-	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.postgresql:postgresql'
+
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 }

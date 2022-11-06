@@ -1,5 +1,8 @@
 package com.wvoort.wc2022.predictservice.config;
 
+import com.wvoort.wc2022.predictservice.model.Policy;
+import com.wvoort.wc2022.predictservice.model.PredictionPolicyFactory;
+import com.wvoort.wc2022.predictservice.model.PredictionPolicyFactoryImpl;
 import com.wvoort.wc2022.predictservice.services.MatchService;
 import com.wvoort.wc2022.predictservice.services.PredictionService;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -30,6 +33,13 @@ public class ApplicationConfig {
 
         return new RestTemplate(req);
     }
+
+    @Bean
+    public PredictionPolicyFactory predictionPolicyFactory() {
+        return new PredictionPolicyFactoryImpl();
+    }
+
+
 
 
 

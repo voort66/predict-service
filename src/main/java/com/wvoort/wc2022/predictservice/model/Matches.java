@@ -1,19 +1,31 @@
 package com.wvoort.wc2022.predictservice.model;
 
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class Matches {
+@Slf4j
+public class Matches implements Serializable {
 
     private List<Match> matchesList = new ArrayList<>();
 
+    private Map<Long, Match> matchMap = new HashMap<>();
+
+
+    private void init() {
+        matchMap = matchesList.stream().collect(Collectors.toMap(Match::getMatchId, Function.identity()));
+    }
+
     public Match getMatchById(Long id) {
-        return matchesList.stream().filter(m -> m.getMatchId().equals(id)).findFirst().get();
+        log.info("Match id = {}", id);
+        Match match =  matchMap.get(id);
+        log.info(match == null? " Match not found": "Match found");
+        return match;
+
     }
 
     public List<Match> getMatchesWithoutPredictions(List<Prediction> predictions) {
@@ -22,7 +34,9 @@ public class Matches {
     }
 
     public static Matches fromJsonResponseString(String matchesJson) {
-        return new Gson().fromJson(matchesJson, Matches.class);
+        Matches matches = new Gson().fromJson(matchesJson, Matches.class);
+        matches.init();
+        return matches;
 
     }
 
