@@ -38,32 +38,32 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="prediction, itemStat : *{predictions}">
+        <tr th:each="prediction : ${predictionDto.predictions}">
             <td>
                         <span>
-                        <img class="logo" th:src="*{predictions[__${itemStat.index}__].matchDetails.homeTeamLogo}"/>
+                        <img class="logo" th:src="${prediction.matchDetails.homeTeamLogo}"/>
                       </span>
-                <span th:text="*{predictions[__${itemStat.index}__].matchDetails.homeTeamName}"/>
+                <span th:text="${prediction.matchDetails.homeTeamName}"/>
 
             </td>
             <td>
-                <span th:text="*{predictions[__${itemStat.index}__].homeGoals}"/>
+                <span th:text="${prediction.homeGoals}"/>
             </td>
             <td>
                        <span>
-                        <img class="logo" th:src="*{predictions[__${itemStat.index}__].matchDetails.awayTeamLogo}"/>
+                        <img class="logo" th:src="${prediction.matchDetails.awayTeamLogo}"/>
                       </span>
-                <span th:text="*{predictions[__${itemStat.index}__].matchDetails.awayTeamName}"/>
+                <span th:text="${prediction.matchDetails.awayTeamName}"/>
 
             </td>
             <td>
-                <span th:text="*{predictions[__${itemStat.index}__].awayGoals}"/>
+                <span th:text="${prediction.awayGoals}"/>
 
 
             </td>
             <td>
-                <span th:text="*{predictions[__${itemStat.index}__].matchDetails.startDate}"/>
-                <span th:text="*{predictions[__${itemStat.index}__].matchDetails.startTime}"/>
+                <span th:text="${prediction.matchDetails.startDate}"/>
+                <span th:text="${prediction.matchDetails.startTime}"/>
             </td>
         </tr>
         </tbody>

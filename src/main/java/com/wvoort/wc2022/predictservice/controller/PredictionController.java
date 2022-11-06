@@ -31,12 +31,12 @@ public class PredictionController {
 
 
 
-    @GetMapping(value = "/predictions/create")
-    public String getPredictions(Authentication authentication, Model model) {
+    @GetMapping(value = "/predictions/edit")
+    public String getPredictionsEdit(Authentication authentication, Model model) {
 
         final PredictionDto predictionDto = new PredictionDto();
 
-        List<Prediction> predictions = predictionService.getPredictions(authentication.getName());
+        List<Prediction> predictions = predictionService.getEditablePredictions(authentication.getName());
         predictions.forEach(predictionDto::addPrediction);
 
         model.addAttribute("user", authentication.getName());
@@ -46,7 +46,24 @@ public class PredictionController {
 
     }
 
-    @PostMapping("/predictions/save")
+    @GetMapping(value = "/predictions/view")
+    public String getPredictionsView(Authentication authentication, Model model) {
+
+        final PredictionDto predictionDto = new PredictionDto();
+
+        List<Prediction> predictions = predictionService.getAllPredictions(authentication.getName());
+        predictions.forEach(predictionDto::addPrediction);
+
+        model.addAttribute("user", authentication.getName());
+        model.addAttribute("predictionDto", predictionDto);
+
+        return "predictions_view";
+
+    }
+
+
+
+        @PostMapping("/predictions/saveme")
     public String doCreatePredictions(Authentication authentication, @Valid @ModelAttribute PredictionDto predictionDto,
                                       BindingResult bindingResult,
                                       Model model) {
@@ -69,7 +86,7 @@ public class PredictionController {
         predictionService.createPredictions(predictionDto.getPredictions());
 
 
-        return "redirect:/predictions/create";
+        return "redirect:/predictions/edit";
     }
 
     private void updateBindingResult(BindingResult bindingResult, List<PredictionValidationService.ErrorDetails> errorDetails) {

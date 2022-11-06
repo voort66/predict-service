@@ -50,7 +50,7 @@ class PredictionControllerTest {
 
     @BeforeEach
     void setUp() {
-        Prediction p  = new Prediction();
+        Prediction p = new Prediction();
         p.setAwayGoals(2);
         p.setHomeGoals(4);
         p.setUserName("Wim");
@@ -65,8 +65,8 @@ class PredictionControllerTest {
 
         p.setMatchDetails(m);
 
-        when(predictionService.getPredictions(any())).thenReturn(Collections.singletonList(p));
-
+        when(predictionService.getEditablePredictions(any())).thenReturn(Collections.singletonList(p));
+        when(predictionService.getAllPredictions(any())).thenReturn(Collections.singletonList(p));
 
     }
 
@@ -74,13 +74,25 @@ class PredictionControllerTest {
     @Test
     @WithMockUser
     void testGetPredictions() throws Exception {
-                MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/predictions/create"))
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/predictions/edit"))
                 .andExpect(status().isOk())
                 .andReturn();
-          String resultSS = result.getResponse().getContentAsString();
-          System.out.println(resultSS);
-          assertNotNull(resultSS);
-//        assertEquals("[{'type': 'season'}]", resultSS);
+        String resultSS = result.getResponse().getContentAsString();
+        System.out.println(resultSS);
+        assertNotNull(resultSS);
+
+    }
+
+    @Test
+    @WithMockUser
+    void testGetAllPredictions() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/predictions/view"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String resultSS = result.getResponse().getContentAsString();
+        System.out.println(resultSS);
+        assertNotNull(resultSS);
+
     }
 
 //    @Test

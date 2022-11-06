@@ -15,10 +15,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -32,6 +32,9 @@ class PredictionServiceTest {
 
     @MockBean
     private MatchService matchService;
+
+    @MockBean
+    private RoundsService roundsService;
 
     @MockBean
     private PredictionRepository predictionRepository;
@@ -67,7 +70,7 @@ class PredictionServiceTest {
 
     @Test
     void testCompleteSetOfPredictions() {
-        List<Prediction> predictions = predictionService.getPredictions("Wim");
+        List<Prediction> predictions = predictionService.getAllPredictions("Wim");
         assertNotNull(predictions);
         assertEquals(48, predictions.size());
 

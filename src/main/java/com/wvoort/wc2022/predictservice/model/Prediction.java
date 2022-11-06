@@ -21,17 +21,6 @@ import java.time.Instant;
 @Data
 public class Prediction implements Comparable<Prediction>, Serializable {
 
-    public Prediction() {
-        //noop
-    }
-
-    public Prediction(Long matchId, String userName, Match matchDetails) {
-        this.matchId = matchId;
-        this.userName = userName;
-        this.matchDetails = matchDetails;
-    }
-
-
     @Id
     private Long matchId;
 
@@ -56,6 +45,30 @@ public class Prediction implements Comparable<Prediction>, Serializable {
     @Setter
     @Getter
     private Match matchDetails;
+
+    public Prediction() {
+        //noop
+    }
+
+    public Prediction(Long matchId, String userName, Match matchDetails) {
+        this.matchId = matchId;
+        this.userName = userName;
+        this.matchDetails = matchDetails;
+    }
+
+
+    public void updateMatchDetails(Matches matches) {
+        setMatchDetails(matches.getMatchById(matchId));
+
+    }
+
+    public boolean isPredictionInMatchesScope(Matches matches) {
+        return matches.getMatchById(matchId) != null;
+    }
+
+    public boolean isComplete() {
+        return awayGoals != null && homeGoals != null;
+    }
 
 
     @Override

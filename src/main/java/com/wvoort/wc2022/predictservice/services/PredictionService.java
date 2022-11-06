@@ -1,14 +1,12 @@
 package com.wvoort.wc2022.predictservice.services;
 
-import com.wvoort.wc2022.predictservice.model.Matches;
-import com.wvoort.wc2022.predictservice.model.Prediction;
-import com.wvoort.wc2022.predictservice.model.PredictionId;
+import com.wvoort.wc2022.predictservice.model.*;
 import com.wvoort.wc2022.predictservice.repository.PredictionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,28 +20,59 @@ public class PredictionService {
     @Autowired
     private MatchService matchService;
 
+    @Autowired
+    private RoundsService roundsService;
 
 
-    public List<Prediction> getPredictions(String userName) {
+
+    public List<Prediction> getEditablePredictions(String userName) {
+
+        Rounds rounds = getRounds();
+        if(rounds.isTournamentFinished()) {
+            return Collections.emptyList();
+        }
+
+        Round round =  rounds.getNextPredictionRound();
+        final Matches matches = getMatchesInRound(round);
 
         List<Prediction> predictions = predictionRepository.findByUserName(userName);
-        predictions.forEach(p -> {
-            p.setMatchDetails(getMatches().getMatchById(p.getMatchId()));
-        });
+        List<Prediction> predictionsInRoundScope =
+                predictions.stream().filter(p -> p.isPredictionInMatchesScope(matches)).collect(Collectors.toList());
 
-        predictions.addAll(
-                getMatches().getMatchesWithoutPredictions(predictions).stream()
+        predictionsInRoundScope.forEach(p -> p.updateMatchDetails(matches));
+
+        predictionsInRoundScope.addAll(
+                matches.getMatchesWithoutPredictions(predictionsInRoundScope).stream()
                         .map(m -> new Prediction(m.getMatchId(), userName, m)).collect(Collectors.toList()));
 
+        return predictionsInRoundScope.stream().sorted().collect(Collectors.toList());
+    }
 
+    public List<Prediction> getAllPredictions(String userName) {
+
+        final Matches matches = getMatches();
+
+        List<Prediction> predictions = predictionRepository.findByUserName(userName);
+
+        predictions.forEach(p -> p.updateMatchDetails(matches));
+
+        predictions.addAll(
+                matches.getMatchesWithoutPredictions(predictions).stream()
+                        .map(m -> new Prediction(m.getMatchId(), userName, m)).collect(Collectors.toList()));
 
         return predictions.stream().sorted().collect(Collectors.toList());
     }
 
-    public void createPredictions(List<Prediction> predictions) {
 
-        predictions.stream().filter(p -> p.getAwayGoals() != null && p.getHomeGoals() != null).map(this::updateTimestamps).
-                forEach(predictionRepository::save);
+
+    public List<Prediction> createPredictions(List<Prediction> predictions) {
+        List<Prediction> completePredictions = predictions.stream().filter(Prediction::isComplete).filter(this::isChanged).
+                map(this::updateTimestamps).collect(Collectors.toList());
+        Matches matches = getMatches();
+        List<Prediction> savedPrediction =
+                predictionRepository.saveAll(completePredictions);
+        savedPrediction.forEach(p -> p.updateMatchDetails(matches));
+        return savedPrediction;
 
 
     }
@@ -60,6 +89,17 @@ public class PredictionService {
 
     }
 
+
+    private boolean isChanged(Prediction prediction) {
+        Prediction savedPrediction = predictionRepository.findById(new PredictionId(prediction.getMatchId(), prediction.getUserName())).orElse(null);
+        if(savedPrediction == null) {
+            return true;
+        }
+
+        return !savedPrediction.getAwayGoals().equals(prediction.getAwayGoals()) ||
+                !savedPrediction.getHomeGoals().equals(prediction.getHomeGoals());
+
+    }
 
     private Prediction updateTimestamps(Prediction prediction) {
         Prediction savedPrediction = predictionRepository.findById(new PredictionId(prediction.getMatchId(), prediction.getUserName())).orElse(null);
@@ -87,5 +127,14 @@ public class PredictionService {
         return matchService.getMatches();
     }
 
+    private Rounds getRounds() {
+        return roundsService.getRounds();
+    }
+
+    private Matches getMatchesInRound(final Round round) {
+        Matches matches = getMatches();
+        return matches.getMatchesForRound(round);
+
+    }
 
 }

@@ -28,9 +28,17 @@ public class Matches implements Serializable {
 
     }
 
+    public Matches getMatchesForRound(Round round) {
+        Matches matches = new Matches();
+        matches.matchesList = this.matchesList.stream().filter(m -> m.startDateTimeAsInstant().isAfter(round.getStart()) && m.startDateTimeAsInstant().isBefore(round.getEnd())).collect(Collectors.toList());
+        matches.init();
+        return matches;
+    }
+
     public List<Match> getMatchesWithoutPredictions(List<Prediction> predictions) {
         Set<Long> predictedMatchIds = predictions.stream().map(p -> p.getMatchId()).collect(Collectors.toSet());
         return matchesList.stream().filter(m -> !predictedMatchIds.contains(m.getMatchId())).collect(Collectors.toList());
+
     }
 
     public static Matches fromJsonResponseString(String matchesJson) {
@@ -39,6 +47,8 @@ public class Matches implements Serializable {
         return matches;
 
     }
+
+
 
     @Override
     public boolean equals(Object o) {

@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Objects;
 
 @Data
@@ -27,6 +28,11 @@ public class Match implements Serializable {
     private String startDate;
 
     private String startTime;
+
+    public Instant startDateTimeAsInstant() {
+        return Instant.parse(startDate + "T" + startTime + ":00Z");
+
+    }
 
     @Override
     public boolean equals(Object o) {
