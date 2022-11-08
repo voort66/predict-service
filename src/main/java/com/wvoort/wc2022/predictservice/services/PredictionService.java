@@ -25,11 +25,11 @@ public class PredictionService {
 
 
 
-    public List<Prediction> getEditablePredictions(String userName) {
+    public Predictions getEditablePredictions(String userName) {
 
         Rounds rounds = getRounds();
         if(rounds.isTournamentFinished()) {
-            return Collections.emptyList();
+            return new Predictions();
         }
 
         Round round =  rounds.getNextPredictionRound();
@@ -45,10 +45,10 @@ public class PredictionService {
                 matches.getMatchesWithoutPredictions(predictionsInRoundScope).stream()
                         .map(m -> new Prediction(m.getMatchId(), userName, m)).collect(Collectors.toList()));
 
-        return predictionsInRoundScope.stream().sorted().collect(Collectors.toList());
+        return new Predictions(predictionsInRoundScope.stream().sorted().collect(Collectors.toList()));
     }
 
-    public List<Prediction> getAllPredictions(String userName) {
+    public Predictions getAllPredictions(String userName) {
 
         final Matches matches = getMatches();
 
@@ -60,19 +60,21 @@ public class PredictionService {
                 matches.getMatchesWithoutPredictions(predictions).stream()
                         .map(m -> new Prediction(m.getMatchId(), userName, m)).collect(Collectors.toList()));
 
-        return predictions.stream().sorted().collect(Collectors.toList());
+        return new Predictions(predictions.stream().sorted().collect(Collectors.toList()));
     }
 
 
 
-    public List<Prediction> createPredictions(List<Prediction> predictions) {
-        List<Prediction> completePredictions = predictions.stream().filter(Prediction::isComplete).filter(this::isChanged).
+    public Predictions createPredictions(Predictions predictions) {
+
+
+        List<Prediction> completePredictions = predictions.getPredictions().stream().filter(Prediction::isComplete).filter(this::isChanged).
                 map(this::updateTimestamps).collect(Collectors.toList());
         Matches matches = getMatches();
-        List<Prediction> savedPrediction =
+        List<Prediction> savedPredictions =
                 predictionRepository.saveAll(completePredictions);
-        savedPrediction.forEach(p -> p.updateMatchDetails(matches));
-        return savedPrediction;
+        savedPredictions.forEach(p -> p.updateMatchDetails(matches));
+        return new Predictions(savedPredictions);
 
 
     }

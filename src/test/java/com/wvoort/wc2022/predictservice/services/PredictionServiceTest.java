@@ -2,6 +2,7 @@ package com.wvoort.wc2022.predictservice.services;
 
 import com.wvoort.wc2022.predictservice.model.Matches;
 import com.wvoort.wc2022.predictservice.model.Prediction;
+import com.wvoort.wc2022.predictservice.model.Predictions;
 import com.wvoort.wc2022.predictservice.repository.PredictionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,12 +71,12 @@ class PredictionServiceTest {
 
     @Test
     void testCompleteSetOfPredictions() {
-        List<Prediction> predictions = predictionService.getAllPredictions("Wim");
+        Predictions predictions = predictionService.getAllPredictions("Wim");
         assertNotNull(predictions);
-        assertEquals(48, predictions.size());
+        assertEquals(48, predictions.getPredictions().size());
 
-        assertEquals(2, predictions.stream().filter(p -> p.getAwayGoals() != null).count());
-        assertEquals( 48,  predictions.stream().filter(p -> p.getMatchDetails() != null).count());
+        assertEquals(2, predictions.getPredictions().stream().filter(p -> p.getAwayGoals() != null).count());
+        assertEquals( 48,  predictions.getPredictions().stream().filter(p -> p.getMatchDetails() != null).count());
     }
 
 

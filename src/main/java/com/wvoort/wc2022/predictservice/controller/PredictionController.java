@@ -1,8 +1,7 @@
 package com.wvoort.wc2022.predictservice.controller;
 
-import com.wvoort.wc2022.predictservice.dto.PredictionDto;
-import com.wvoort.wc2022.predictservice.model.Prediction;
 import com.wvoort.wc2022.predictservice.model.PredictionException;
+import com.wvoort.wc2022.predictservice.model.Predictions;
 import com.wvoort.wc2022.predictservice.services.PredictionService;
 import com.wvoort.wc2022.predictservice.services.PredictionValidationService;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +33,9 @@ public class PredictionController {
     @GetMapping(value = "/predictions/edit")
     public String getPredictionsEdit(Authentication authentication, Model model) {
 
-        final PredictionDto predictionDto = new PredictionDto();
-
-        List<Prediction> predictions = predictionService.getEditablePredictions(authentication.getName());
-        predictions.forEach(predictionDto::addPrediction);
-
+        Predictions predictions = predictionService.getEditablePredictions(authentication.getName());
         model.addAttribute("user", authentication.getName());
-        model.addAttribute("predictionDto", predictionDto);
+        model.addAttribute("predictionDto", predictions);
 
         return "predictions_create";
 
@@ -49,13 +44,11 @@ public class PredictionController {
     @GetMapping(value = "/predictions/view")
     public String getPredictionsView(Authentication authentication, Model model) {
 
-        final PredictionDto predictionDto = new PredictionDto();
 
-        List<Prediction> predictions = predictionService.getAllPredictions(authentication.getName());
-        predictions.forEach(predictionDto::addPrediction);
 
+        Predictions predictions = predictionService.getAllPredictions(authentication.getName());
         model.addAttribute("user", authentication.getName());
-        model.addAttribute("predictionDto", predictionDto);
+        model.addAttribute("predictionDto", predictions);
 
         return "predictions_view";
 
@@ -64,7 +57,7 @@ public class PredictionController {
 
 
         @PostMapping("/predictions/saveme")
-    public String doCreatePredictions(Authentication authentication, @Valid @ModelAttribute PredictionDto predictionDto,
+    public String doCreatePredictions(Authentication authentication, @Valid @ModelAttribute Predictions predictionDto,
                                       BindingResult bindingResult,
                                       Model model) {
 
@@ -78,12 +71,12 @@ public class PredictionController {
 
 
         if(bindingResult.hasErrors()){
-            updatePredictionsWithMatchDetails(((PredictionDto)model.getAttribute("predictionDto")).getPredictions());
+            updatePredictionsWithMatchDetails(((Predictions)model.getAttribute("predictionDto")));
             model.addAttribute("user", authentication.getName());
             return "predictions_create";
         }
 
-        predictionService.createPredictions(predictionDto.getPredictions());
+        predictionService.createPredictions(predictionDto);
 
 
         return "redirect:/predictions/edit";
@@ -93,9 +86,9 @@ public class PredictionController {
        errorDetails.forEach(e -> bindingResult.addError(new ObjectError(e.getFieldName(), e.getErrorDescription())));
     }
 
-    private void updatePredictionsWithMatchDetails(List<Prediction> predictions) {
+    private void updatePredictionsWithMatchDetails(Predictions predictions) {
 
-        predictions.forEach(predictionService::updatePredictionWithMatchDetails);
+        predictions.getPredictions().forEach(predictionService::updatePredictionWithMatchDetails);
     }
 
 

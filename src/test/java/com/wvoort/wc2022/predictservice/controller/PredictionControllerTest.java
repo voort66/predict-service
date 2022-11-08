@@ -3,31 +3,27 @@ package com.wvoort.wc2022.predictservice.controller;
 import com.wvoort.wc2022.predictservice.model.Match;
 import com.wvoort.wc2022.predictservice.model.Prediction;
 import com.wvoort.wc2022.predictservice.model.PredictionPolicyFactory;
+import com.wvoort.wc2022.predictservice.model.Predictions;
 import com.wvoort.wc2022.predictservice.services.PredictionService;
 import com.wvoort.wc2022.predictservice.services.PredictionValidationService;
-import org.aspectj.lang.annotation.Before;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
@@ -65,8 +61,10 @@ class PredictionControllerTest {
 
         p.setMatchDetails(m);
 
-        when(predictionService.getEditablePredictions(any())).thenReturn(Collections.singletonList(p));
-        when(predictionService.getAllPredictions(any())).thenReturn(Collections.singletonList(p));
+        Predictions predictions = new Predictions(Arrays.asList(p));
+
+        when(predictionService.getEditablePredictions(any())).thenReturn(predictions);
+        when(predictionService.getAllPredictions(any())).thenReturn(predictions);
 
     }
 
