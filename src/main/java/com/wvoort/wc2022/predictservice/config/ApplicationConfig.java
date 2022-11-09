@@ -7,6 +7,7 @@ import com.wvoort.wc2022.predictservice.services.MatchService;
 import com.wvoort.wc2022.predictservice.services.PredictionService;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -16,6 +17,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
 @Configuration
+@EntityScan("com.wvoort.wc2022.predictservice.model")
 public class ApplicationConfig {
 
     @Bean

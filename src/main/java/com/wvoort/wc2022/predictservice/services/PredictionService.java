@@ -24,7 +24,6 @@ public class PredictionService {
     private RoundsService roundsService;
 
 
-
     public Predictions getEditablePredictions(String userName) {
 
         Rounds rounds = getRounds();
@@ -61,6 +60,15 @@ public class PredictionService {
                         .map(m -> new Prediction(m.getMatchId(), userName, m)).collect(Collectors.toList()));
 
         return new Predictions(predictions.stream().sorted().collect(Collectors.toList()));
+    }
+
+    public Predictions getPredictionsForAllUsers() {
+        List<Prediction> predictions = predictionRepository.findAll();
+        final Matches matches = getMatches();
+        predictions.forEach(p -> p.updateMatchDetails(matches));
+
+        return new Predictions(predictions.stream().sorted().collect(Collectors.toList()));
+
     }
 
 

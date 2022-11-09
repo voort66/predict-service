@@ -22,6 +22,7 @@ public class SecurityConfig  {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests(authorize -> authorize.anyRequest().authenticated()).csrf().disable()
         .formLogin(withDefaults()).httpBasic(withDefaults());
+
         return http.build();
     }
     @Bean
